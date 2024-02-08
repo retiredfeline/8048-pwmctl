@@ -6,17 +6,17 @@ FIRMWARE_END=0x3FF
 default:	pwmctl.rom
 
 # assemble with as8048
-%.ihx:		%.asm
+%.hex:		%.asm
 		as8048 -l -o $<
 		aslink -i -o $(<:.asm=.rel)
 
 # convert to binary
-%.ibn:		%.ihx
-		hex2bin -e ibn $<
+%.bin:		%.hex
+		hex2bin -e bin $<
 
-# generate rom from ibn by padding and adding checksum at end
-%.rom:		%.ibn
-		srec_cat $< -binary -crop 0 $(FIRMWARE_END) -fill 0xFF 0 $(FIRMWARE_END) -checksum-neg-b-e $(FIRMWARE_END) 1 1 -o $(<:.ibn=.rom) -binary
+# generate rom from bin by padding and adding checksum at end
+%.rom:		%.bin
+		srec_cat $< -binary -crop 0 $(FIRMWARE_END) -fill 0xFF 0 $(FIRMWARE_END) -checksum-neg-b-e $(FIRMWARE_END) 1 1 -o $(<:.bin=.rom) -binary
 
 clean:
-		rm -f *.sym *.lst *.rel *.hlr *.ihx
+		rm -f *.sym *.lst *.rel *.hlr *.hex
